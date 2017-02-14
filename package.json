@@ -4,7 +4,16 @@
   "description": "Simple stats for game servers",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.1.4",
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "game-server-query": "^1.0.10",
+    "sequelize": "^3.30.2",
+    "sqlite3": "^3.1.8"
+  }
 }
