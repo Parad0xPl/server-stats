@@ -1,8 +1,5 @@
 
-const tsquery = require('./ts-query').query;
-const query = tsquery("parad0x.pl", "10010", function (err, darta) {
-  if(err){
-    console.log(err);
-  }
-  console.log(darta);
+const query = require('./ts-query').query;
+query("parad0x.pl", null, function (err, data) {
+  console.log(data);
 });

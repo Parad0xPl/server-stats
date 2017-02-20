@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title><%- title -%></title>
+
+    <link rel="stylesheet" href="/libs.css">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/bundle.js"></script>
+  </head>
+  <body>
+    <div class="container" id="statsApp">
+      <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <router-link to="/" class="navbar-brand"><%- title -%></router-link>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">First</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Second</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Third</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="row">
+        <div class="col-12">
+          <router-view></router-view>
+        </div>
+      </div>
+    </div>
+</html>
