@@ -105,6 +105,12 @@ const tsquery = require('./ts-query').query;
   };
 
   var responseHandlers = require("./responseHandler")(db);
+  var trafficAtributes = [
+    "players",
+    "maxplayers",
+    "createdAt",
+    "serverId"
+  ];
   exports.statusGrabber = {
     getHandler: function (type) {
       var x = statusHandlers[searchQueryType(type)];
@@ -130,14 +136,18 @@ const tsquery = require('./ts-query').query;
       });
     },
     getTraffic: function (callback) {
-      db.traffic.findAll().then(function(servers) {
+      db.traffic.findAll({
+        attributes: trafficAtributes
+      }).then(function(servers) {
         callback(servers);
       });
     },
     getTrafficById: function (id, callback) {
       db.traffic.findAll({where: {
-        serverId: id
-      }}).then(function(servers) {
+          serverId: id
+        },
+        attributes: trafficAtributes
+      }).then(function(servers) {
         callback(servers);
       });
     }
