@@ -134,8 +134,10 @@ const tsquery = require('./ts-query').query;
         callback(servers);
       });
     },
-    getTrafficById: function (callback) {
-      db.traffic.findAll().then(function(servers) {
+    getTrafficById: function (id, callback) {
+      db.traffic.findAll({where: {
+        serverId: id
+      }}).then(function(servers) {
         callback(servers);
       });
     }

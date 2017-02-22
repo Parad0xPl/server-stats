@@ -160,6 +160,12 @@ app.get("/api/trafic/get/all", function (req, res) {
   });
 });
 
+app.get("/api/trafic/get/:id", function (req, res) {
+  engine.statusGrabber.getTrafficById(req.params.id ,function (data) {
+    res.send(JSON.stringify(data));
+  });
+});
+
 app.get("/api/status", function (req, res) {
   engine.serverMenager.list(function (data) {
     async.map(data, function (data, callback) {
