@@ -24,15 +24,20 @@ module.exports = class intervalMenager {
     return this;
   }
   getLast(){
-    return new Date() - this.lastInterval();
+    if (this.lastInterval === null) {
+      return 0;
+    }
+    return (new Date()) - this.lastInterval;
   }
   start(){
     if (this.intervalId === null) {
-      var self = this;
-      this.intervalId = setInterval(function () {
+      var fun = function () {
         self.function(++self.id);
         self.lastInterval = new Date();
-      }, this.interval);
+      };
+      var self = this;
+      this.intervalId = setInterval(fun, this.interval);
+      setTimeout(fun, 1);
       return this;
     }else{
       throw new Error("Interval already started");
