@@ -6,6 +6,7 @@ module.exports = class intervalMenager {
     };
     this.interval = 1000;
     this.id = 0;
+    this.lastInterval = null;
     return this;
   }
   setFunction(fn){
@@ -22,15 +23,28 @@ module.exports = class intervalMenager {
     this.interval = int;
     return this;
   }
+  getLast(){
+    return new Date() - this.lastInterval();
+  }
   start(){
-    var self = this;
-    this.intervalId = setInterval(function () {
-      self.function(++self.id);
-    }, this.interval);
-    return this;
+    if (this.intervalId === null) {
+      var self = this;
+      this.intervalId = setInterval(function () {
+        self.function(++self.id);
+        self.lastInterval = new Date();
+      }, this.interval);
+      return this;
+    }else{
+      throw new Error("Interval already started");
+    }
   }
   stop(){
-    clearInterval(this.intervalId);
-    return this;
+    if(this.intervalId !== null){
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+      return this;
+    }else{
+      throw new Error("No interval to stop");
+    }
   }
 };
