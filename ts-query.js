@@ -83,5 +83,6 @@ exports.query = function(host, port, callback){
   socket.write("use 1\n");
   socket.write("serverinfo\n");
   socket.write("clientlist\n");
+  socket.write("quit\n");
   socket.end();
 };
