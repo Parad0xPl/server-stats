@@ -176,13 +176,29 @@ const tsquery = require('./ts-query').query;
 { //CODE BLOCK Config menager
   var configFilePath = path.resolve("./config.json");
   const defaultConfig = {
-    lang: "en"
+    lang: "en",
+    updateInterval : 1000 * 60 * 15
   };
   exports.configMenager = {
     config: {},
     load: function () {
       if(fs.existsSync(configFilePath)){
-        this.config = JSON.parse(fs.readFileSync(configFilePath));
+        var tmp = JSON.parse(fs.readFileSync(configFilePath));
+        var defaultKeys = Object.keys(defaultConfig);
+        var safeConfig = {};
+        var configProblem = false;
+        defaultKeys.forEach(function (key) {
+          if(tmp.hasOwnProperty(key)){
+            safeConfig[key] = tmp[key];
+          }else{
+            configProblem = true;
+            safeConfig[key] = defaultConfig[key];
+          }
+        });
+        this.config = safeConfig;
+        if (configProblem) {
+          this.save();
+        }
       }else{
         this.config = defaultConfig;
         this.save();
