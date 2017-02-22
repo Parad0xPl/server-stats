@@ -120,6 +120,12 @@ app.get("/api/trafic/update/:id", function (req, res) {
   });
 });
 
+app.get("/api/trafic/get/all", function (req, res) {
+  engine.statusGrabber.getTraffic(function (data) {
+    res.send(JSON.stringify(data));
+  });
+});
+
 app.get("/api/status", function (req, res) {
   engine.serverMenager.list(function (data) {
     async.map(data, function (data, callback) {
@@ -154,11 +160,6 @@ app.get("/api/status/:id", function (req, res) {
   });
 });
 
-app.get("/api/trafic/get/all", function (req, res) {
-  engine.statusGrabber.getTraffic(function (data) {
-    res.send(JSON.stringify(data));
-  });
-});
 var cache = "";
 app.get("/api/details/cached", function (req, res) {
   res.send(cache);
