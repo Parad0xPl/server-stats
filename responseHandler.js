@@ -78,9 +78,13 @@ handler.registerQuery("teamspeak-query", function (data, server, returnNotAdd) {
     var arr = [], unknown = [];
     data.clients.forEach(function (el) {
       if(el.indexOf("Unknown from ") === 0){
-        unknown.push(el);
+        unknown.push({
+          name: el
+        });
       }else{
-        arr.push(el);
+        arr.push({
+          name: el
+        });
       }
     });
     arr.sort();
