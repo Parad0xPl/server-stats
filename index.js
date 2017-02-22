@@ -3,13 +3,14 @@ const bodyparser = require('body-parser');
 const async = require('async');
 const ejs = require('ejs');
 const serve = require('./serve');
+const im = require("./intervalMenager");
 var app = express();
 var engine = require("./engine");
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/web');
 // app.engine('ejs', require('ejs').renderFile);
-
+var updateInterval = new im();
 
 var locals = {
   title: "Simple Stats"
@@ -120,6 +121,39 @@ app.get("/api/trafic/update/:id", function (req, res) {
   });
 });
 
+app.get("/api/trafic/last", function (req, res) {
+  res.send(JSON.stringify({
+    success: true,
+    last: updateInterval.getLast()
+  }));
+});
+
+app.get("/api/trafic/start", function (req, res) {
+  try {
+    updateInterval.start();
+    res.send(JSON.stringify({
+      success: true
+    }));
+  } catch (e) {
+    res.send(JSON.stringify({
+      success: false
+    }));
+  }
+});
+
+app.get("/api/trafic/stop", function (req, res) {
+  try {
+    updateInterval.stop();
+    res.send(JSON.stringify({
+      success: true
+    }));
+  } catch (e) {
+    res.send(JSON.stringify({
+      success: false
+    }));
+  }
+});
+
 app.get("/api/trafic/get/all", function (req, res) {
   engine.statusGrabber.getTraffic(function (data) {
     res.send(JSON.stringify(data));
@@ -196,4 +230,29 @@ app.use(function(req, res, next){
   res.render('index');
 });
 
-app.listen(80);
+var onInit = function () {
+  updateInterval
+    .setInterval(engine.configMenager.config.updateInterval)
+    .setFunction(function () {
+      engine.serverMenager.list(function (data) {
+        async.map(data, function (data, callback) {
+          var server = data;
+          engine.statusGrabber.getStatus(server.type, server.address, function(data) {
+            var h = engine.statusGrabber.getResponseHandler(server.type);
+            h(data, server.get("id"));
+            callback(null, data);
+          });
+        }, function (err, map) {
+        });
+      });
+    })
+    .start();
+};
+
+var onExit = function () {
+  updateInterval.stop();
+};
+
+app.listen(80, function () {
+  onInit();
+});
