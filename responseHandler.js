@@ -4,6 +4,7 @@ var db;
 handler.registerDefault(function (data, server, returnNotAdd) {
   console.log("Default");
   var frame = {};
+  frame.date = data.date || new Date();
   if(typeof(data.players) == "number"){
     frame.players = data.players;
   }else if(data.players && data.players.length >= 0){
@@ -32,6 +33,7 @@ handler.registerDefault(function (data, server, returnNotAdd) {
 handler.registerQuery("game-server-query", function (data, server, returnNotAdd) {
   var frame = {};
   frame.traffic = {};
+  frame.date = data.date || new Date();
   if(typeof(data.players) == "number"){
     frame.traffic.players = data.players;
   }else if(data.players && data.players.length >= 0){
@@ -52,6 +54,7 @@ handler.registerQuery("game-server-query", function (data, server, returnNotAdd)
   }
   if(frame.traffic.maxplayers && frame.traffic.players >= 0){
     db.traffic.create({
+      createdAt: frame.date,
       serverId: server,
       maxplayers: frame.traffic.maxplayers,
       players: frame.traffic.players
@@ -62,6 +65,7 @@ handler.registerQuery("game-server-query", function (data, server, returnNotAdd)
 handler.registerQuery("teamspeak-query", function (data, server, returnNotAdd) {
   var frame = {};
   frame.traffic = {};
+  frame.date = data.date || new Date();
   if(data.virtualserver_maxclients){
     frame.traffic.maxplayers = data.virtualserver_maxclients;
   }
@@ -100,6 +104,7 @@ handler.registerQuery("teamspeak-query", function (data, server, returnNotAdd) {
   if(frame.traffic.maxplayers && frame.traffic.players >= 0){
     db.traffic.create({
       serverId: server,
+      createdAt: frame.date,
       maxplayers: frame.traffic.maxplayers,
       players: frame.traffic.players
     });
