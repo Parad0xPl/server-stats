@@ -25,7 +25,7 @@
           Players:<span>{{details.players.length}}/{{details.traffic.maxplayers}}</span>
         </div>
         <ul class="list-group" v-if="details.players !== undefined">
-          <li v-for="player in details.players" class="list-group-item">{{player}}</li>
+          <li v-for="player in details.players" class="list-group-item">{{player.name}}</li>
         </ul>
       </div>
       <div class="col-2">
