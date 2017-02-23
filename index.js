@@ -240,11 +240,13 @@ var onInit = function () {
   updateInterval
     .setInterval(engine.configMenager.config.updateInterval)
     .setFunction(function () {
+      var date = new Date();
       engine.serverMenager.list(function (data) {
         async.map(data, function (data, callback) {
           var server = data;
           engine.statusGrabber.getStatus(server.type, server.address, function(data) {
             var h = engine.statusGrabber.getResponseHandler(server.type);
+            data.date = date;
             h(data, server.get("id"));
             callback(null, data);
           });
