@@ -253,6 +253,6 @@ var onExit = function () {
   updateInterval.stop();
 };
 
-app.listen(80, function () {
+app.listen(engine.configMenager.config.port, function () {
   onInit();
 });

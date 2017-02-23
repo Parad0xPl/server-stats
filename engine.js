@@ -177,7 +177,8 @@ const tsquery = require('./ts-query').query;
   var configFilePath = path.resolve("./config.json");
   const defaultConfig = {
     lang: "en",
-    updateInterval : 1000 * 60 * 15
+    updateInterval : 1000 * 60 * 15,
+    port: 8080
   };
   exports.configMenager = {
     config: {},
