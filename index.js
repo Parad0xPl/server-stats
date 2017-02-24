@@ -39,6 +39,29 @@ app.get("/api/types", function (req, res) {
   res.send(JSON.stringify(engine.st.getServerTypes()));
 });
 
+app.get("/api/config", function (req, res) {
+  res.send(JSON.stringify(engine.configMenager.config));
+});
+
+app.post("/api/config", function (req, res) {
+  for (var key in req.body) {
+    if (!req.body.hasOwnProperty(key)) {
+      continue;
+    }
+    if(engine.configMenager.config.hasOwnProperty(key)){
+      if (typeof(ngine.configMenager.config[key]) === "number") {
+        engine.configMenager.config[key] = parseInt(req.body[key]);
+      }else{
+        engine.configMenager.config[key] = req.body[key];
+      }
+    }
+    engine.configMenager.save();
+  }
+  res.send(JSON.stringify({
+    success: "true"
+  }));
+});
+
 app.get("/api/servers/list", function (req,res) {
   engine.serverMenager.list(function (data) {
     res.send(JSON.stringify(data));
