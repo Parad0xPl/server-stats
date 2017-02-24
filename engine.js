@@ -192,6 +192,7 @@ const tsquery = require('./ts-query').query;
     updateInterval : 1000 * 60 * 15,
     port: 8080
   };
+  
   exports.configMenager = {
     config: {},
     load: function () {
