@@ -67,10 +67,10 @@ handler.registerQuery("teamspeak-query", function (data, server, returnNotAdd) {
   frame.traffic = {};
   frame.date = data.date || new Date();
   if(data.virtualserver_maxclients){
-    frame.traffic.maxplayers = data.virtualserver_maxclients;
+    frame.traffic.maxplayers = parseInt(data.virtualserver_maxclients);
   }
   if(data.virtualserver_clientsonline){
-    frame.traffic.players = data.virtualserver_clientsonline;
+    frame.traffic.players = parseInt(data.virtualserver_clientsonline);
   }
   if(data.virtualserver_password && data.virtualserver_password !== "undefined"){
     frame.password = true;
