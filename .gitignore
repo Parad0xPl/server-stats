@@ -1,7 +1,6 @@
 # Customs
 database.sqlite
 config.json
-web/bundle.js
 
 # Logs
 logs
