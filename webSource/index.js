@@ -75,6 +75,25 @@ $(function () {
           }
         }
       };
+      if(this.$route.path !== "/"){
+        var server = new XMLHttpRequest();
+        server.open('GET', '/api/details');
+        server.send(null);
+        server.onreadystatechange = function () {
+          if (server.readyState == XMLHttpRequest.DONE &&
+            server.status === 200) {
+            self.$root.servers = JSON.parse(server.response);
+            self.$root.serversId = {};
+            for (var a in self.servers) {
+              if (!self.servers.hasOwnProperty(a)) {
+                continue;
+              }
+              var obj = self.servers[a];
+              self.$root.serversId[obj.id] = a;
+            }
+          }
+        };
+      }
     }
   });//.$mount("#statsApp");
 });
