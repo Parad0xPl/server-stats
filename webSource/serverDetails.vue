@@ -54,6 +54,11 @@ export default {
       server: {}
     }
   },
+  watch: {
+    "$root.servers": function () {
+      this.server = this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])];
+    }
+  },
   methods: {
     update: function () {
       if(this.$root.servers.length !== 0 && this.$root.serversId){
