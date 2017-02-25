@@ -16,6 +16,7 @@ Vue.config.devtools = true;
 // Silence logs and warnings
 Vue.config.silent = false;
 
+import comp_config from "./config.vue";
 import comp_serverList from "./serverList.vue";
 import comp_serverDetails from "./serverDetails.vue";
 import comp_server from "./server.vue";
@@ -28,7 +29,8 @@ Vue.component('servergraph', comp_servergraph);
 
 var routes = [
   { path: "/", component:  comp_serverList },
-  { path: "/server/:id", component:  comp_serverDetails }
+  { path: "/server/:id", component:  comp_serverDetails },
+  { path: "/config", component:  comp_config }
 ];
 
 const router = new VueRouter({
