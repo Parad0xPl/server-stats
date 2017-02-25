@@ -63,6 +63,14 @@ $(function () {
         if (serverCache.readyState == XMLHttpRequest.DONE &&
           serverCache.status === 200) {
           self.$root.servers = JSON.parse(serverCache.response);
+          self.$root.serversId = {};
+          for (var a in self.servers) {
+            if (!self.servers.hasOwnProperty(a)) {
+              continue;
+            }
+            var obj = self.servers[a];
+            self.$root.serversId[obj.id] = a;
+          }
         }
       };
     }

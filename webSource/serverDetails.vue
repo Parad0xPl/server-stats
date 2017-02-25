@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="row">
-
+      <servergraph :server="parseInt($route.params.id)" :maxplayers="server.maxPlayers"></servergraph>
     </div>
   </div>
 </template>
@@ -46,7 +46,11 @@ export default {
   },
   data: function () {
     return {
-      details: {},
+      details: {
+        traffic: {
+
+        }
+      },
       server: {}
     }
   },

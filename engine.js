@@ -173,10 +173,11 @@ const tsquery = require('./ts-query').query;
       month: function (date, id, callback) {
         var from = new Date(date.toDateString());
         from.setUTCDate(1);
-        var to = new Date(from);
-        for(var m = to.getUTCMonth(); to.getUTCMonth() === m;){
-          to = new Date(to.valueOf() + 1000*60*60*24);
-        }
+        var to = new Date(from.valueOf() + 1000*60*60*24*32);
+        to.setUTCDate(1);
+        // for(var m = to.getUTCMonth(); to.getUTCMonth() === m;){
+        //   to = new Date(to.valueOf() + 1000*60*60*24);
+        // }
         exports.statusGrabber.getTrafficByRange(from, to, id, callback);
       },
       year: function (date, id, callback) {
