@@ -49,8 +49,14 @@ app.post("/api/config", function (req, res) {
       continue;
     }
     if(engine.configMenager.config.hasOwnProperty(key)){
-      if (typeof(ngine.configMenager.config[key]) === "number") {
+      if (typeof(engine.configMenager.config[key]) === "number") {
         engine.configMenager.config[key] = parseInt(req.body[key]);
+      }else if(typeof(engine.configMenager.config[key]) === "boolean"){
+        if(req.body[key] === "true"){
+          engine.configMenager.config[key] = true;
+        }else if(req.body[key] === "false"){
+          engine.configMenager.config[key] = false;
+        }
       }else{
         engine.configMenager.config[key] = req.body[key];
       }
@@ -189,6 +195,38 @@ app.get("/api/trafic/get/:id", function (req, res) {
   });
 });
 
+var newDate = function(req){
+  var date = new Date(0);
+  date.setUTCFullYear(parseInt(req.params.year));
+  date.setUTCMonth(parseInt(req.params.month) - 1);
+  date.setUTCDate(parseInt(req.params.day));
+  return date;
+};
+
+app.get("/api/trafic/:id/:day/:month/:year/day", function (req, res) {
+  var date = newDate(req);
+  var id = parseInt(req.params.id);
+  engine.statusGrabber.pretty.day(date, id, function (records) {
+    res.send(JSON.stringify(records));
+  });
+});
+
+app.get("/api/trafic/:id/:day/:month/:year/month", function (req, res) {
+  var date = newDate(req);
+  var id = parseInt(req.params.id);
+  engine.statusGrabber.pretty.month(date, id, function (records) {
+    res.send(JSON.stringify(records));
+  });
+});
+
+app.get("/api/trafic/:id/:day/:month/:year/year", function (req, res) {
+  var date = newDate(req);
+  var id = parseInt(req.params.id);
+  engine.statusGrabber.pretty.year(date, id, function (records) {
+    res.send(JSON.stringify(records));
+  });
+});
+
 app.get("/api/status", function (req, res) {
   engine.serverMenager.list(function (data) {
     async.map(data, function (data, callback) {
@@ -255,11 +293,19 @@ app.get("/api/details", function (req, res) {
   });
 });
 
+app.all("/api/*", function (req, res) {
+  res.send(JSON.stringify({
+    success:false,
+    msg: "No method founded"
+  }));
+});
+
 app.use(function(req, res, next){
   res.render('index');
 });
 
 var onInit = function () {
+  if(engine.configMenager.config.updateState){
   updateInterval
     .setInterval(engine.configMenager.config.updateInterval)
     .setFunction(function () {
@@ -278,6 +324,7 @@ var onInit = function () {
       });
     })
     .start();
+  }
 };
 
 var onExit = function () {

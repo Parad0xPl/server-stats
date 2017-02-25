@@ -150,6 +150,43 @@ const tsquery = require('./ts-query').query;
       }).then(function(servers) {
         callback(servers);
       });
+    },
+    getTrafficByRange: function (from, to, id, callback) {
+      db.traffic.findAll({where: {
+          serverId: id,
+          createdAt: {
+            $gt: from,
+            $lt: to
+          }
+        },
+        attributes: trafficAtributes
+      }).then(function(records) {
+        callback(records);
+      });
+    },
+    pretty: {
+      day: function (date, id, callback) {
+        var from = new Date(date.toDateString()),
+            to = new Date(from.valueOf() + 1000*60*60*24);
+        exports.statusGrabber.getTrafficByRange(from, to, id, callback);
+      },
+      month: function (date, id, callback) {
+        var from = new Date(date.toDateString());
+        from.setUTCDate(1);
+        var to = new Date(from);
+        for(var m = to.getUTCMonth(); to.getUTCMonth() === m;){
+          to = new Date(to.valueOf() + 1000*60*60*24);
+        }
+        exports.statusGrabber.getTrafficByRange(from, to, id, callback);
+      },
+      year: function (date, id, callback) {
+        var from = new Date(date.toDateString());
+        from.setUTCDate(1);
+        from.setUTCMonth(0);
+        var to = new Date(from);
+        to.setUTCFullYear(to.getUTCFullYear() + 1);
+        exports.statusGrabber.getTrafficByRange(from, to, id, callback);
+      }
     }
   };
 }
@@ -190,9 +227,10 @@ const tsquery = require('./ts-query').query;
   const defaultConfig = {
     lang: "en",
     updateInterval : 1000 * 60 * 15,
-    port: 8080
+    port: 8080,
+    updateState: true
   };
-  
+
   exports.configMenager = {
     config: {},
     load: function () {
