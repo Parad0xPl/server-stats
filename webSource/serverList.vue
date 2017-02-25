@@ -25,6 +25,11 @@ export default {
     this.servers = this.$root.servers;
     this.update();
   },
+  watch: {
+    "$root.servers": function (val, old) {
+      this.servers = val;
+    }
+  },
   data: function () {
     return {
       servers: [],

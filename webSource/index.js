@@ -20,9 +20,11 @@ import comp_serverList from "./serverList.vue";
 import comp_serverDetails from "./serverDetails.vue";
 import comp_server from "./server.vue";
 import comp_serveredit from "./serveredit.vue";
+import comp_servergraph from "./servergraph.vue";
 
 Vue.component('server', comp_server);
 Vue.component('serveredit', comp_serveredit);
+Vue.component('servergraph', comp_servergraph);
 
 var routes = [
   { path: "/", component:  comp_serverList },
@@ -52,6 +54,15 @@ $(function () {
         if (types.readyState == XMLHttpRequest.DONE &&
           types.status === 200) {
           self.types = JSON.parse(types.response);
+        }
+      };
+      var serverCache = new XMLHttpRequest();
+      serverCache.open('GET', '/api/details/cached');
+      serverCache.send(null);
+      serverCache.onreadystatechange = function () {
+        if (serverCache.readyState == XMLHttpRequest.DONE &&
+          serverCache.status === 200) {
+          self.$root.servers = JSON.parse(serverCache.response);
         }
       };
     }
