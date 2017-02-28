@@ -51434,6 +51434,7 @@ var generateTemplate = function(){
     },
     data: function () {
       return {
+        chart: {}
         // datasetTempalte:{
         //   label: "Traffic",
         //   fill: true,
@@ -51535,7 +51536,8 @@ var generateTemplate = function(){
               var firstStamp = new Date(obj[0].createdAt);
               var dataset = {
                 label: "Traffic",
-                data: []
+                data: [],
+                labels: []
               };
               // console.log(dataset);
               dataset = Object.assign({}, generateTemplate(), dataset)
@@ -51554,7 +51556,8 @@ var generateTemplate = function(){
                   self.graphdata.datasets.push(dataset);
                   dataset = {
                     label: "Traffic",
-                    data: []
+                    data: [],
+                    labels: []
                   };
                   dataset = Object.assign({}, generateTemplate(), dataset)
                 }
@@ -51569,7 +51572,8 @@ var generateTemplate = function(){
                 //   x: stamp,
                 //   y: el.players
                 // });
-                self.graphdata.labels.push(new Date(el.createdAt).toLocaleTimeString());
+                // dataset.labels.push(new Date(el.createdAt).toLocaleTimeString());
+                self.labels[stamp] = new Date(el.createdAt).toLocaleTimeString();
               });
               // console.log("Dataset ", dataset);
               // self.graphdata.datasets.push(dataset);
