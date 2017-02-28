@@ -15,7 +15,7 @@
           <li v-if="details && details.password !== undefined">
             Password: {{details.password?"true":"false"}}
           </li>
-          <li v-if="details && details.traffic !== undefined">
+          <li v-if="details && details.traffic !== undefined && details.traffic.players !== undefined && details.traffic.maxplayers !== undefined">
             Actual: {{details.traffic.players}}/{{details.traffic.maxplayers}}
           </li>
         </ul>
