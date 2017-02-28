@@ -131,7 +131,6 @@ var generateTemplate = function(){
           return -1;
         }
         var self = this;
-        var req = new XMLHttpRequest();
         var date = new Date();
         var year = date.getUTCFullYear();
         var month = date.getUTCMonth() + 1;
@@ -146,69 +145,65 @@ var generateTemplate = function(){
         url += year;
         url += "/day";
         // console.log(url);
-        req.open('GET', url);
-        req.onreadystatechange = function () {
-          if (req.readyState == XMLHttpRequest.DONE &&
-            req.status === 200) {
-              var obj = JSON.parse(req.response);
-              if(obj.length <= 0){
-                return -1;
+        $.getJSON(url)
+          .done(function (obj) {
+            if(obj.length <= 0){
+              return -1;
+            }
+            self.graphdata.datasets[0].data = [];
+            self.graphdata.datasets = [];
+            var firstStamp = new Date(obj[0].createdAt);
+            self.stamp = firstStamp;
+            var dataset = {
+              label: "Traffic",
+              data: [],
+              labels: []
+            };
+            // console.log(dataset);
+            dataset = Object.assign({}, generateTemplate(), dataset)
+            var lastStamp = firstStamp/1000;
+            var gap = firstStamp/1000 - new Date(obj[1].createdAt)/1000;
+            gap = Math.abs(Math.floor(gap));
+            obj.forEach(function (el) {
+              var stamp = new Date(el.createdAt) - firstStamp;
+              stamp /= 1000;
+              // console.log("Gap: ", gap);
+              // console.log("Stamp: ", stamp);
+              // console.log("lastStamp: ", lastStamp);
+              // console.log(stamp-lastStamp);
+              if(stamp-lastStamp >  2*gap){
+                // console.log("Dataset ", dataset);
+                self.graphdata.datasets.push(dataset);
+                dataset = {
+                  label: "Traffic",
+                  data: [],
+                  labels: []
+                };
+                dataset = Object.assign({}, generateTemplate(), dataset)
               }
-              self.graphdata.datasets[0].data = [];
-              self.graphdata.datasets = [];
-              var firstStamp = new Date(obj[0].createdAt);
-              self.stamp = firstStamp;
-              var dataset = {
-                label: "Traffic",
-                data: [],
-                labels: []
-              };
-              // console.log(dataset);
-              dataset = Object.assign({}, generateTemplate(), dataset)
-              var lastStamp = firstStamp/1000;
-              var gap = firstStamp/1000 - new Date(obj[1].createdAt)/1000;
-              gap = Math.abs(Math.floor(gap));
-              obj.forEach(function (el) {
-                var stamp = new Date(el.createdAt) - firstStamp;
-                stamp /= 1000;
-                // console.log("Gap: ", gap);
-                // console.log("Stamp: ", stamp);
-                // console.log("lastStamp: ", lastStamp);
-                // console.log(stamp-lastStamp);
-                if(stamp-lastStamp >  2*gap){
-                  // console.log("Dataset ", dataset);
-                  self.graphdata.datasets.push(dataset);
-                  dataset = {
-                    label: "Traffic",
-                    data: [],
-                    labels: []
-                  };
-                  dataset = Object.assign({}, generateTemplate(), dataset)
-                }
-                lastStamp = stamp;
-                stamp /= 60;
-                stamp = Math.floor(stamp);
-                stamp = new Date(el.createdAt);
-                dataset.data.push({
-                  x: stamp,
-                  y: el.players
-                });
-                // self.graphdata.datasets[0].data.push({
-                //   x: stamp,
-                //   y: el.players
-                // });
-                // dataset.labels.push(new Date(el.createdAt).toLocaleTimeString());
-                self.labels[stamp] = new Date(el.createdAt).toLocaleTimeString();
+              lastStamp = stamp;
+              stamp /= 60;
+              stamp = Math.floor(stamp);
+              stamp = new Date(el.createdAt);
+              dataset.data.push({
+                x: stamp,
+                y: el.players
               });
-              // console.log("Dataset ", dataset);
-              // self.graphdata.datasets.push(dataset);
-              self.graphdata.datasets.push(dataset);
-              self.graphdata = JSON.parse(JSON.stringify(self.graphdata));
-              // console.log("Graphdata ", self.graphdata);
-              self.update();
-          }
-        };
-        req.send(null);
+              // self.graphdata.datasets[0].data.push({
+              //   x: stamp,
+              //   y: el.players
+              // });
+              // dataset.labels.push(new Date(el.createdAt).toLocaleTimeString());
+              self.labels[stamp] = new Date(el.createdAt).toLocaleTimeString();
+            });
+            // console.log("Dataset ", dataset);
+            // self.graphdata.datasets.push(dataset);
+            self.graphdata.datasets.push(dataset);
+            self.graphdata = JSON.parse(JSON.stringify(self.graphdata));
+            // console.log("Graphdata ", self.graphdata);
+            self.update();
+
+          });
       }
     }
   }

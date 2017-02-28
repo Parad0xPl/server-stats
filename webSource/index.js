@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "sweetalert2/dist/sweetalert2.css";
 import Vue from "vue";
 import VueRouter from "vue-router";
+import $ from "jquery";
 
 Vue.use(VueRouter);
 
@@ -49,22 +50,13 @@ $(function () {
     },
     created: function(){
       var self = this;
-      var types = new XMLHttpRequest();
-      types.open('GET', '/api/types');
-      types.send(null);
-      types.onreadystatechange = function () {
-        if (types.readyState == XMLHttpRequest.DONE &&
-          types.status === 200) {
-          self.types = JSON.parse(types.response);
-        }
-      };
-      var serverCache = new XMLHttpRequest();
-      serverCache.open('GET', '/api/details/cached');
-      serverCache.send(null);
-      serverCache.onreadystatechange = function () {
-        if (serverCache.readyState == XMLHttpRequest.DONE &&
-          serverCache.status === 200) {
-          self.$root.servers = JSON.parse(serverCache.response);
+      $.getJSON('/api/types')
+        .done(function (types) {
+          self.types = types;
+        });
+      $.getJSON('/api/details/cached')
+        .done(function (res) {
+          self.$root.servers = res;
           self.$root.serversId = {};
           for (var a in self.servers) {
             if (!self.servers.hasOwnProperty(a)) {
@@ -73,16 +65,11 @@ $(function () {
             var obj = self.servers[a];
             self.$root.serversId[obj.id] = a;
           }
-        }
-      };
+        });
       if(this.$route.path !== "/"){
-        var server = new XMLHttpRequest();
-        server.open('GET', '/api/details');
-        server.send(null);
-        server.onreadystatechange = function () {
-          if (server.readyState == XMLHttpRequest.DONE &&
-            server.status === 200) {
-            self.$root.servers = JSON.parse(server.response);
+        $.getJSON('/api/details')
+          .done(function (details) {
+            self.$root.servers = details;
             self.$root.serversId = {};
             for (var a in self.servers) {
               if (!self.servers.hasOwnProperty(a)) {
@@ -91,8 +78,7 @@ $(function () {
               var obj = self.servers[a];
               self.$root.serversId[obj.id] = a;
             }
-          }
-        };
+          });
       }
     }
   });//.$mount("#statsApp");

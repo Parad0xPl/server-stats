@@ -105,18 +105,12 @@ export default {
             return;
           }
           // Request
-          var req_add = new XMLHttpRequest();
-          req_add.open('POST', '/api/servers/add');
-          req_add.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-          req_add.onreadystatechange = function () {
-            if (req_add.readyState == XMLHttpRequest.DONE &&
-              req_add.status === 200) {
-                self.$router.push("/");
-                form.find("input, select").val("");
-                self.onSubmit();
-            }
-          };
-          req_add.send(form.serialize());
+          $.post('/api/servers/add', form.serialize())
+            .done(function () {
+              self.$router.push("/");
+              form.find("input, select").val("");
+              self.onSubmit();
+            });
       });
     }
   }

@@ -39,12 +39,8 @@ export default {
   methods: {
     update: function () {
       var self = this;
-      var req = new XMLHttpRequest();
-      req.open('GET', '/api/details');
-      req.send(null);
-      req.onreadystatechange = function () {
-        if (req.readyState == XMLHttpRequest.DONE &&
-          req.status === 200) {
+      $.getJSON('/api/details')
+        .done(function () {
           self.servers = JSON.parse(req.response);
           var a;
           self.$root.servers = self.servers;
@@ -56,8 +52,7 @@ export default {
             var obj = self.servers[a];
             self.$root.serversId[obj.id] = a;
           }
-        }
-      };
+        });
     }
   }
 }

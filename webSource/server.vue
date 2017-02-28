@@ -58,19 +58,15 @@ export default {
         confirmButtonText: 'Yes, delete it!'
       }).then(function () {
         var req = new XMLHttpRequest();
-        req.open('GET', '/api/servers/remove/'+ id);
-        req.send(null);
-        req.onreadystatechange = function () {
-          if (req.readyState == XMLHttpRequest.DONE &&
-            req.status === 200) {
+        $.getJSON('/api/servers/remove/'+ id)
+          .done(function (res) {
             self.update();
             var el = $(self.$el);
             el.css("opacity", 0.5);
             var actions = el.find("#actions");
             actions.children().hide();
             actions.append('<img src="svg/loading.svg"></img>');
-          }
-        };
+          });
       }, function () {
       }).catch(console.log);
     }

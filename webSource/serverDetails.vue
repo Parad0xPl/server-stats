@@ -39,6 +39,7 @@
 </template>
 <script>
 import swal from "sweetalert2";
+import $ from "jquery";
 
 export default {
   created: function () {
@@ -65,15 +66,10 @@ export default {
         this.server = this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])];
       }
       var self = this;
-      var req = new XMLHttpRequest();
-      req.open('GET', '/api/servers/get/'+this.$route.params.id);
-      req.send(null);
-      req.onreadystatechange = function () {
-        if (req.readyState == XMLHttpRequest.DONE &&
-          req.status === 200) {
-          self.details = JSON.parse(req.response);
-        }
-      };
+      $.getJSON('/api/servers/get/'+this.$route.params.id)
+        .done(function (details) {
+          self.details = details;
+        });
     },
     remove: function (id) {
       var self = this;
@@ -86,16 +82,11 @@ export default {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, delete it!'
       }).then(function () {
-        var req = new XMLHttpRequest();
-        req.open('GET', '/api/servers/remove/'+ id);
-        req.send(null);
-        req.onreadystatechange = function () {
-          if (req.readyState == XMLHttpRequest.DONE &&
-            req.status === 200) {
-          }
-        };
+        $.getJSON('/api/servers/remove/'+ id)
+          .done(function (res) {
+
+          });
         self.$router.push("/");
-      }, function () {
       }).catch(console.log);
     }
   }
