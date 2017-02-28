@@ -4,7 +4,7 @@
       <div class="form-group row">
         <label class="col-2 col-form-label">Update Interval</label>
         <div class="col-10">
-          <input v-model="options.updateInterval" class="form-control" type="Number">
+          <input v-model="updateInterval" class="form-control" type="Number">
         </div>
       </div>
       <div class="form-group row">
@@ -33,6 +33,7 @@ import $ from "jquery";
 export default {
   data: function () {
     return {
+      updateInterval: null,
       options: {
         updateInterval: null,
         port: null,
@@ -41,21 +42,17 @@ export default {
     }
   },
   created: function () {
-    var config = new XMLHttpRequest();
-    var form = $(this.$el);
     var self = this;
-    config.open('GET', '/api/config');
-    config.onreadystatechange = function () {
-      if (config.readyState == XMLHttpRequest.DONE &&
-        config.status === 200) {
-          self.options = JSON.parse(config.response);
-      }
-    };
-    config.send(form.serialize());
+    $.getJSON('/api/config')
+      .done(function (config) {
+        self.options = config;
+        self.updateInterval = self.options.updateInterval/(1000*60);
+      });
   },
   methods: {
     send(){
       var self = this;
+      self.options.updateInterval = self.updateInterval * 1000*60;
       var config = new XMLHttpRequest();
       config.open('POST', '/api/config');
       config.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
