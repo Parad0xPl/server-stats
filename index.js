@@ -305,7 +305,6 @@ app.use(function(req, res, next){
 });
 
 var onInit = function () {
-  if(engine.configMenager.config.updateState){
   updateInterval
     .setInterval(engine.configMenager.config.updateInterval)
     .setFunction(function () {
@@ -322,8 +321,9 @@ var onInit = function () {
         }, function (err, map) {
         });
       });
-    })
-    .start();
+    });
+  if(engine.configMenager.config.updateState){
+    updateInterval.start();
   }
 };
 
