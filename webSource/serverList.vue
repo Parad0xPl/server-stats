@@ -40,8 +40,8 @@ export default {
     update: function () {
       var self = this;
       $.getJSON('/api/details')
-        .done(function () {
-          self.servers = JSON.parse(req.response);
+        .done(function (res) {
+          self.servers = res;
           var a;
           self.$root.servers = self.servers;
           self.$root.serversId = {};

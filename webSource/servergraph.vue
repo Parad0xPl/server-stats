@@ -52,7 +52,7 @@ var generateTemplate = function(){
     data: function () {
       return {
         chart: {},
-        labels: {},
+        // labels: {},
         stamp: null
         // datasetTempalte:{
         //   label: "Traffic",
@@ -79,10 +79,10 @@ var generateTemplate = function(){
       }
     },
     methods: {
-      update: function () {
+      initData: function () {
         this.params = {
           type: 'line',
-          data: this.graphdata,
+          data: {},
           options: {
             responsive: true,
             legend:{
@@ -106,18 +106,18 @@ var generateTemplate = function(){
             }
           }
         };
+      },
+      update: function () {
         if(this.maxplayers > 0){
           this.params.options.scales.yAxes[0].ticks.max = parseInt(this.maxplayers);
         }else if(this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers){
           this.params.options.scales.yAxes[0].ticks.max = this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers;
         }
-        // console.log(this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])]);
-        // console.log(this.$root);
-        // console.log("Params ", this.params);
-        // console.log(JSON.stringify(this.params));
+        this.params.data = this.graphdata;
         this.chart = new Chart(this.$el, this.params);
       },
       updateData: function () {
+        this.initData();
         this.graphdata = {
           labels: [],
           datasets: [
@@ -150,9 +150,11 @@ var generateTemplate = function(){
             if(obj.length <= 0){
               return -1;
             }
+            console.log(self);
             self.graphdata.datasets[0].data = [];
             self.graphdata.datasets = [];
             var firstStamp = new Date(obj[0].createdAt);
+            self.params.options.scales.xAxes[0].time.min = firstStamp;
             self.stamp = firstStamp;
             var dataset = {
               label: "Traffic",
@@ -185,6 +187,7 @@ var generateTemplate = function(){
               stamp /= 60;
               stamp = Math.floor(stamp);
               stamp = new Date(el.createdAt);
+              self.params.options.scales.xAxes[0].time.max = stamp;
               dataset.data.push({
                 x: stamp,
                 y: el.players
@@ -194,11 +197,12 @@ var generateTemplate = function(){
               //   y: el.players
               // });
               // dataset.labels.push(new Date(el.createdAt).toLocaleTimeString());
-              self.labels[stamp] = new Date(el.createdAt).toLocaleTimeString();
+              //self.labels[stamp] = new Date(el.createdAt).toLocaleTimeString();
             });
             // console.log("Dataset ", dataset);
             // self.graphdata.datasets.push(dataset);
             self.graphdata.datasets.push(dataset);
+
             self.graphdata = JSON.parse(JSON.stringify(self.graphdata));
             // console.log("Graphdata ", self.graphdata);
             self.update();
