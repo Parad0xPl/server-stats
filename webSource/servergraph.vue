@@ -51,7 +51,9 @@ var generateTemplate = function(){
     },
     data: function () {
       return {
-        chart: {}
+        chart: {},
+        labels: {},
+        stamp: null
         // datasetTempalte:{
         //   label: "Traffic",
         //   fill: true,
@@ -94,7 +96,11 @@ var generateTemplate = function(){
               }],
               xAxes: [{
                 display: true,
-                type: 'linear',
+                type: 'time',
+                time: {
+                    tooltipFormat: "H:mm:ss",
+                    displayFormat: "H:mm:ss"
+                },
                 position: 'bottom'
               }]
             }
@@ -151,6 +157,7 @@ var generateTemplate = function(){
               self.graphdata.datasets[0].data = [];
               self.graphdata.datasets = [];
               var firstStamp = new Date(obj[0].createdAt);
+              self.stamp = firstStamp;
               var dataset = {
                 label: "Traffic",
                 data: [],
@@ -181,6 +188,7 @@ var generateTemplate = function(){
                 lastStamp = stamp;
                 stamp /= 60;
                 stamp = Math.floor(stamp);
+                stamp = new Date(el.createdAt);
                 dataset.data.push({
                   x: stamp,
                   y: el.players
