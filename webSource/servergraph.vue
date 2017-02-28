@@ -144,6 +144,9 @@ var generateTemplate = function(){
           if (req.readyState == XMLHttpRequest.DONE &&
             req.status === 200) {
               var obj = JSON.parse(req.response);
+              if(obj.length <= 0){
+                return -1;
+              }
               self.graphdata.datasets[0].data = [];
               self.graphdata.datasets = [];
               var firstStamp = new Date(obj[0].createdAt);
