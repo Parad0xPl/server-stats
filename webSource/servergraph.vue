@@ -130,6 +130,22 @@ var generateTemplate = function(){
             this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers){
           this.params.options.scales.yAxes[0].ticks.max = this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers;
         }
+        switch (this.type) {
+          case 0:
+            this.params.options.scales.xAxes[0].time.displayFormat = "H:mm:ss";
+            this.params.options.scales.xAxes[0].time.tooltipFormat = "H:mm:ss";
+            break;
+          case 1:
+            this.params.options.scales.xAxes[0].time.displayFormat = "D";
+            this.params.options.scales.xAxes[0].time.tooltipFormat = "D.MM H:mm:ss";
+            break;
+          case 2:
+            this.params.options.scales.xAxes[0].time.displayFormat = "D.MM.YY";
+            this.params.options.scales.xAxes[0].time.tooltipFormat = "D.MM.YY H:mm:ss";
+            break;
+          default:
+
+        }
         this.params.data = this.graphdata;
         this.chart.update();
       },
