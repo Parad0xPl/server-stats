@@ -1,5 +1,10 @@
 <template>
-  <canvas id="graph"></canvas>
+  <div class="container">
+    <button @click="type = 0">Day</button>
+    <button @click="type = 1">Month</button>
+    <button @click="type = 2">Year</button>
+    <canvas id="graph"></canvas>
+  </div>
 </template>
 <script>
 var generateTemplate = function(){
@@ -37,7 +42,8 @@ var generateTemplate = function(){
       this.updateData();
     },
     mounted: function () {
-      //this.update();
+      this.initData();
+      this.update();
     },
     props: {
       server: {
@@ -52,6 +58,7 @@ var generateTemplate = function(){
     data: function () {
       return {
         chart: {},
+        type: 0,
         // labels: {},
         stamp: null
         // datasetTempalte:{
@@ -76,6 +83,12 @@ var generateTemplate = function(){
         //   data: [],
         //   // spanGaps: false,
         // },
+      }
+    },
+    watch:{
+      type: function () {
+        this.updateData(this.type);
+        this.update();
       }
     },
     methods: {
@@ -106,18 +119,22 @@ var generateTemplate = function(){
             }
           }
         };
+        this.chartElement = $(this.$el).find("#graph");
+        console.log(this.chartElement);
+        this.chart = new Chart(this.chartElement, this.params);
       },
       update: function () {
         if(this.maxplayers > 0){
           this.params.options.scales.yAxes[0].ticks.max = parseInt(this.maxplayers);
-        }else if(this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers){
+        }else if(this.$root.servers &&
+            this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers){
           this.params.options.scales.yAxes[0].ticks.max = this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers;
         }
         this.params.data = this.graphdata;
-        this.chart = new Chart(this.$el, this.params);
+        this.chart.update();
       },
-      updateData: function () {
-        this.initData();
+      updateData: function (type) {
+        type = type || 0;
         this.graphdata = {
           labels: [],
           datasets: [
@@ -143,14 +160,25 @@ var generateTemplate = function(){
         url += month;
         url += "/";
         url += year;
-        url += "/day";
+        switch (type) {
+          case 0:
+            url += "/day";
+            break;
+          case 1:
+            url += "/month";
+            break;
+          case 2:
+            url += "/year";
+            break;
+          default:
+            url += "/day";
+        }
         // console.log(url);
         $.getJSON(url)
           .done(function (obj) {
             if(obj.length <= 0){
               return -1;
             }
-            console.log(self);
             self.graphdata.datasets[0].data = [];
             self.graphdata.datasets = [];
             var firstStamp = new Date(obj[0].createdAt);
