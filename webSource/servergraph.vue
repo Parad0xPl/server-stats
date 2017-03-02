@@ -120,13 +120,12 @@ var generateTemplate = function(){
           }
         };
         this.chartElement = $(this.$el).find("#graph");
-        console.log(this.chartElement);
         this.chart = new Chart(this.chartElement, this.params);
       },
       update: function () {
         if(this.maxplayers > 0){
           this.params.options.scales.yAxes[0].ticks.max = parseInt(this.maxplayers);
-        }else if(this.$root.servers &&
+        }else if(this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])] &&
             this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers){
           this.params.options.scales.yAxes[0].ticks.max = this.$root.servers[parseInt(this.$root.serversId[this.$route.params.id])].maxPlayers;
         }
