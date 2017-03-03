@@ -1,11 +1,14 @@
 <template>
   <div class="container">
     <div class="row" id="dateControls">
-      <div class="col-9">
-        <input class="form-control" type="date" value="2011-08-19">
+      <div class="col-7">
+        <input class="form-control" type="date" v-model.lazy="date">
+      </div>
+      <div class="col-2">
+        <button class="form-control" type="button" @click="today">Today</button>
       </div>
       <div class="col-3">
-        <select class="form-control" name="type" v-model="type">
+        <select class="form-control" name="type" v-model.number="type">
           <option value="0">Day</option>
           <option value="1">Month</option>
           <option value="2">Year</option>
@@ -68,6 +71,7 @@ var generateTemplate = function(){
       return {
         chart: {},
         type: 0,
+        date: new Date().toISOString().split("T")[0],
         // labels: {},
         stamp: null
         // datasetTempalte:{
@@ -96,12 +100,31 @@ var generateTemplate = function(){
     },
     watch:{
       type: function (val) {
-        this.type = parseInt(val);
-        this.updateData(this.type);
+        this.updateData();
         this.update();
+      },
+      date: function (val, old) {
+        if(val === ""){
+          this.date = old;
+        }
+        if(val === old){
+          return 0;
+        }
+        var self = this;
+        if(this.dateInt){
+          clearTimeout(this.dateInt);
+        }
+        this.dateInt = setTimeout(function () {
+          console.log(val);
+          self.updateData();
+          self.update();
+        }, 300)
       }
     },
     methods: {
+      today: function () {
+        this.date = new Date().toISOString().split("T")[0];
+      },
       initData: function () {
         this.params = {
           type: 'line',
@@ -159,7 +182,7 @@ var generateTemplate = function(){
         this.chart.update();
       },
       updateData: function (type) {
-        type = type || 0;
+        this.type = this.type || 0;
         this.graphdata = {
           labels: [],
           datasets: [
@@ -173,7 +196,7 @@ var generateTemplate = function(){
           return -1;
         }
         var self = this;
-        var date = new Date();
+        var date = new Date(this.date);
         var year = date.getUTCFullYear();
         var month = date.getUTCMonth() + 1;
         var day = date.getUTCDate();
@@ -185,7 +208,7 @@ var generateTemplate = function(){
         url += month;
         url += "/";
         url += year;
-        switch (type) {
+        switch (this.type) {
           case 0:
             url += "/day";
             break;
