@@ -22,3 +22,11 @@
 #actions img {
     height: 1.1em;
 }
+
+#dateControls {
+  padding: 10px 20px;
+}
+
+#dateControls select {
+  height: 100%;
+}

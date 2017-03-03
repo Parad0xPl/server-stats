@@ -1,8 +1,17 @@
 <template>
   <div class="container">
-    <button @click="type = 0">Day</button>
-    <button @click="type = 1">Month</button>
-    <button @click="type = 2">Year</button>
+    <div class="row" id="dateControls">
+      <div class="col-9">
+        <input class="form-control" type="date" value="2011-08-19">
+      </div>
+      <div class="col-3">
+        <select class="form-control" name="type" v-model="type">
+          <option value="0">Day</option>
+          <option value="1">Month</option>
+          <option value="2">Year</option>
+        </select>
+      </div>
+    </div>
     <canvas id="graph"></canvas>
   </div>
 </template>
@@ -86,7 +95,8 @@ var generateTemplate = function(){
       }
     },
     watch:{
-      type: function () {
+      type: function (val) {
+        this.type = parseInt(val);
         this.updateData(this.type);
         this.update();
       }
