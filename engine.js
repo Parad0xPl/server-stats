@@ -4,8 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const db = require("./database");
 const ut = require("./utils");
-const gmquery = require('game-server-query');
-const tsquery = require('./ts-query').query;
 
 
 { //CODE BLOCK Type list and modifing
@@ -42,48 +40,6 @@ const tsquery = require('./ts-query').query;
     }
   };
 }
-{ //CODE BLOCK Status Handlers
-  var statusHandlers = {
-    "game-server-query": function (type, address, callback) {
-      var port = parseInt(address.split(":")[1]);
-      address = address.split(":")[0];
-      var options = {type: type, host: address};
-      if(port){
-        options.port = port;
-      }
-      gmquery(
-        options,
-        function(state) {
-          if(state.error){
-            callback({
-              offline: true
-            });
-          }else {
-            callback(state);
-          }
-        }
-      );
-    },
-    "teamspeak-query": function (type, address, callback) {
-      var port = parseInt(address.split(":")[1]);
-      address = address.split(":")[0];
-      var options = {type: type, host: address};
-      if(port){
-        options.port = port;
-      }
-      const query = tsquery(options.host, options.port, function (err, data) {
-        if(err){
-          callback({
-            offline: true,
-            error: err
-          });
-        }else{
-          callback(data);
-        }
-      });
-    }
-  };
-}
 { //CODE BLOCK Status Grabber
   var searchQueryType = function (type) {
     var x;
@@ -104,6 +60,7 @@ const tsquery = require('./ts-query').query;
   };
 
   var responseHandlers = require("./responseHandler")(db);
+  var statusHandlers = require("./statusHandler")(db);
   var trafficAtributes = [
     "players",
     "maxplayers",
@@ -112,9 +69,10 @@ const tsquery = require('./ts-query').query;
   ];
   exports.statusGrabber = {
     getHandler: function (type) {
-      var x = statusHandlers[searchQueryType(type)];
-      if(x){
-        return x;
+      // var x = statusHandlers[searchQueryType(type)];
+      var statusH = statusHandlers.getHandler(null, searchQueryType(type));
+      if(statusH){
+        return statusH;
       }
       throw new Error("No handler for "+type+" type");
     },
@@ -174,9 +132,6 @@ const tsquery = require('./ts-query').query;
         from.setUTCDate(1);
         var to = new Date(from.valueOf() + 1000*60*60*24*32);
         to.setUTCDate(1);
-        // for(var m = to.getUTCMonth(); to.getUTCMonth() === m;){
-        //   to = new Date(to.valueOf() + 1000*60*60*24);
-        // }
         exports.statusGrabber.getTrafficByRange(from, to, id, callback);
       },
       year: function (date, id, callback) {
@@ -193,8 +148,6 @@ const tsquery = require('./ts-query').query;
 { //CODE BLOCK Server menager
   exports.serverMenager = {
     list: function (callback) {
-      // callback(serversList)
-      //   serversList - Array of servers
       db.server.findAll().then(function(servers) {
         callback(servers);
       });
@@ -235,13 +188,13 @@ const tsquery = require('./ts-query').query;
     config: {},
     load: function () {
       if(fs.existsSync(configFilePath)){
-        var tmp = JSON.parse(fs.readFileSync(configFilePath));
+        var confFile = JSON.parse(fs.readFileSync(configFilePath));
         var defaultKeys = Object.keys(defaultConfig);
         var safeConfig = {};
         var configProblem = false;
         defaultKeys.forEach(function (key) {
-          if(tmp.hasOwnProperty(key)){
-            safeConfig[key] = tmp[key];
+          if(confFile.hasOwnProperty(key)){
+            safeConfig[key] = confFile[key];
           }else{
             configProblem = true;
             safeConfig[key] = defaultConfig[key];
