@@ -10,36 +10,35 @@ const tsquery = require('./ts-query').query;
 
 { //CODE BLOCK Type list and modifing
   var rawTypes = JSON.parse(fs.readFileSync("availableTypes.json", "utf-8"));
-  var types = {};
-  var typesFull = {};
-  var x;
-  for(x in rawTypes){
-    if(!rawTypes.hasOwnProperty(x)){
+  var gameTypes = {};
+  var gameNames = {};
+  for(var queryGroup in rawTypes){
+    if(!rawTypes.hasOwnProperty(queryGroup)){
       continue;
     }
-    Object.assign(types, rawTypes[x]);
-    for(var y in rawTypes[x]){
-      if(rawTypes[x].hasOwnProperty(y)){
-        typesFull[rawTypes[x][y]] = y;
+    Object.assign(gameTypes, rawTypes[queryGroup]);
+    for(var gameName in rawTypes[queryGroup]){
+      if(rawTypes[queryGroup].hasOwnProperty(gameName)){
+        gameNames[rawTypes[queryGroup][gameName]] = gameName;
       }
     }
   }
 
-  types = ut.sortObj(types);
-  typesFull = ut.sortObj(typesFull);
+  gameTypes = ut.sortObj(gameTypes);
+  gameNames = ut.sortObj(gameNames);
 
   exports.st = {
     getServerTypes: function () {
-      return types;
+      return gameTypes;
     },
     getServerType: function (id) {
-      return types[id];
+      return gameTypes[id];
     },
     getFullServerTypes: function () {
-      return typesFull;
+      return gameNames;
     },
     getFullServerType: function (id) {
-      return typesFull[id];
+      return gameNames[id];
     }
   };
 }
