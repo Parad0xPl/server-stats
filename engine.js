@@ -153,7 +153,7 @@ const ut = require("./utils");
       });
     },
     getByID: function (id, callback) {
-      db.server.findById(id).then(function (server) {
+      db.server.findByPk(id).then(function (server) {
         callback(null, server);
       }).catch(function () {
         callback("No server with this id");
